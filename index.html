@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sec Experts — Cyber Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#080b10;--bg2:#0d1117;--bg3:#111820;
+  --border:rgba(0,255,170,0.12);--border-hi:rgba(0,255,170,0.35);
+  --accent:#00ffaa;--accent2:#00aaff;--red:#ff4455;--amber:#ffaa00;
+  --text:#e2e8f0;--muted:#64748b;--card:#0d1520;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,255,170,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,170,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+
+header{position:sticky;top:0;z-index:100;background:rgba(8,11,16,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;gap:1.5rem;height:60px}
+.logo{font-family:'Space Mono',monospace;font-size:1rem;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:0.5rem;white-space:nowrap}
+.logo-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,255,170,0.4)}50%{box-shadow:0 0 0 6px rgba(0,255,170,0)}}
+.search-wrap{flex:1;max-width:420px;position:relative}
+.search-wrap input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.5rem 1rem .5rem 2.4rem;color:var(--text);font-family:'Syne',sans-serif;font-size:.85rem;outline:none;transition:border-color .2s}
+.search-wrap input:focus{border-color:var(--accent)}
+.search-wrap input::placeholder{color:var(--muted)}
+.s-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.8rem}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:.75rem}
+.live-badge{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--accent);background:rgba(0,255,170,0.08);border:1px solid var(--border);border-radius:4px;padding:.2rem .5rem}
+
+.layout{display:flex;position:relative;z-index:1}
+
+aside{width:220px;min-height:calc(100vh - 60px);border-right:1px solid var(--border);padding:1.25rem 0;position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;flex-shrink:0}
+aside::-webkit-scrollbar{width:3px}
+aside::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.s-label{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;padding:.25rem .75rem;margin-bottom:.25rem}
+.s-item{display:flex;align-items:center;gap:.55rem;padding:.4rem .75rem;border-radius:6px;cursor:pointer;font-size:.825rem;color:var(--muted);transition:all .15s;border:1px solid transparent;margin:0 .5rem .1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-item:hover{background:rgba(0,255,170,0.05);color:var(--text);border-color:var(--border)}
+.s-item.active{background:rgba(0,255,170,0.08);color:var(--accent);border-color:var(--border-hi)}
+.s-dot{width:5px;height:5px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.s-item.active .s-dot{background:var(--accent)}
+.s-item.breach .s-dot{background:var(--amber)}
+.s-item.breach.active{color:var(--amber);border-color:rgba(255,170,0,0.35);background:rgba(255,170,0,0.06)}
+.s-item.cve .s-dot{background:var(--red)}
+.s-item.cve.active{color:var(--red);border-color:rgba(255,68,85,0.35);background:rgba(255,68,85,0.06)}
+.s-div{height:1px;background:var(--border);margin:.75rem .75rem}
+
+main{flex:1;padding:1.75rem 2rem;min-width:0}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.875rem;margin-bottom:1.75rem}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.25rem;position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent);opacity:.5}
+.stat.r::before{background:var(--red)}
+.stat.a::before{background:var(--amber)}
+.stat.b::before{background:var(--accent2)}
+.stat-lbl{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem}
+.stat-val{font-size:1.75rem;font-weight:800;line-height:1;color:var(--accent)}
+.stat.r .stat-val{color:var(--red)}
+.stat.a .stat-val{color:var(--amber)}
+.stat.b .stat-val{color:var(--accent2)}
+.stat-sub{font-size:.7rem;color:var(--muted);margin-top:.2rem}
+
+.ai-box{background:var(--card);border:1px solid var(--border-hi);border-radius:12px;padding:1.25rem;margin-bottom:1.75rem;position:relative;overflow:hidden}
+.ai-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.ai-lbl{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.75rem}
+.ai-row{display:flex;gap:.6rem}
+.ai-input{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.65rem 1rem;color:var(--text);font-family:'Syne',sans-serif;font-size:.85rem;outline:none;transition:border-color .2s}
+.ai-input:focus{border-color:var(--accent)}
+.ai-input::placeholder{color:var(--muted)}
+.ai-btn{background:var(--accent);color:var(--bg);border:none;border-radius:8px;padding:.65rem 1.25rem;font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap}
+.ai-btn:hover{background:#00ddaa;transform:translateY(-1px)}
+.ai-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.ai-resp{margin-top:.875rem;padding:.875rem 1rem;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-size:.85rem;line-height:1.7;color:var(--text);display:none;white-space:pre-wrap}
+.ai-resp.show{display:block}
+
+.feed-hdr{display:flex;align-items:center;gap:.75rem;margin-bottom:.875rem}
+.feed-title{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.feed-line{flex:1;height:1px;background:var(--border)}
+.feed-ct{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);background:var(--bg3);border:1px solid var(--border);border-radius:3px;padding:.12rem .4rem}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.875rem 1.1rem;margin-bottom:.45rem;transition:all .15s;position:relative;overflow:hidden}
+.card:hover{border-color:var(--border-hi);transform:translateX(3px)}
+.card.exploited{border-left:3px solid var(--red);background:rgba(255,68,85,0.03)}
+.card.high{border-left:3px solid var(--amber)}
+.card-meta{display:flex;align-items:center;gap:.4rem;margin-bottom:.35rem;flex-wrap:wrap}
+.badge{font-family:'Space Mono',monospace;font-size:.58rem;padding:.12rem .45rem;border-radius:3px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.bp{background:rgba(0,170,255,0.1);color:var(--accent2);border:1px solid rgba(0,170,255,0.2)}
+.bc{background:rgba(255,68,85,0.1);color:var(--red);border:1px solid rgba(255,68,85,0.2)}
+.bb{background:rgba(255,170,0,0.1);color:var(--amber);border:1px solid rgba(255,170,0,0.2)}
+.bx{background:rgba(255,68,85,0.15);color:var(--red);border:1px solid rgba(255,68,85,0.3);animation:flash 2s ease-in-out infinite}
+.bn{background:rgba(0,255,170,0.07);color:var(--accent);border:1px solid var(--border)}
+@keyframes flash{0%,100%{opacity:1}50%{opacity:.6}}
+.card-time{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--muted);margin-left:auto}
+.card-title{font-size:.875rem;font-weight:600;color:var(--text);margin-bottom:.3rem;line-height:1.4}
+.card-summary{font-size:.775rem;color:var(--muted);line-height:1.6}
+.card-link{display:inline-flex;align-items:center;gap:.25rem;margin-top:.45rem;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--accent2);text-decoration:none;transition:color .15s}
+.card-link:hover{color:var(--accent)}
+.watch-btn{font-family:'Space Mono',monospace;font-size:.58rem;padding:.15rem .45rem;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;position:absolute;top:.875rem;right:.875rem}
+.watch-btn:hover,.watch-btn.watching{border-color:var(--accent);color:var(--accent);background:rgba(0,255,170,0.07)}
+
+.loading{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:2.5rem;color:var(--muted);font-family:'Space Mono',monospace;font-size:.75rem}
+.spinner{width:14px;height:14px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:2.5rem;color:var(--muted);font-family:'Space Mono',monospace;font-size:.75rem}
+.load-more{width:100%;background:transparent;border:1px solid var(--border);border-radius:8px;padding:.65rem;color:var(--muted);font-family:'Space Mono',monospace;font-size:.72rem;cursor:pointer;transition:all .15s;margin-top:.4rem}
+.load-more:hover{border-color:var(--border-hi);color:var(--accent)}
+
+@media(max-width:900px){aside{display:none}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){main{padding:1rem}.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><div class="logo-dot"></div>SEC EXPERTS</div>
+  <div class="search-wrap">
+    <span class="s-icon">⌕</span>
+    <input type="text" id="search-input" placeholder="Search products, CVEs, breaches..." oninput="handleSearch(this.value)">
+  </div>
+  <div class="hdr-right">
+    <div class="live-badge" id="last-updated">LOADING...</div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside id="sidebar">
+    <div class="s-label">Overview</div>
+    <div class="s-item active" onclick="setProduct('all',this)"><div class="s-dot"></div>All intelligence</div>
+    <div class="s-item cve" onclick="setProduct('CVE',this)"><div class="s-dot"></div>CVEs / NVD</div>
+    <div class="s-item cve" onclick="setProduct('CISA KEV',this)"><div class="s-dot"></div>CISA KEV ⚠️</div>
+    <div class="s-item breach" onclick="setProduct('Data Breach',this)"><div class="s-dot"></div>Data Breaches</div>
+    <div class="s-item" onclick="setProduct('Security News',this)"><div class="s-dot"></div>Security News</div>
+    <div class="s-item" onclick="setProduct('Exploit DB',this)"><div class="s-dot"></div>Exploit DB</div>
+    <div class="s-div"></div>
+    <div class="s-label">Microsoft</div>
+    <div class="s-item" onclick="setProduct('Microsoft',this)"><div class="s-dot"></div>Microsoft</div>
+    <div class="s-item" onclick="setProduct('Microsoft Azure',this)"><div class="s-dot"></div>Azure</div>
+    <div class="s-item" onclick="setProduct('Microsoft Defender',this)"><div class="s-dot"></div>Defender</div>
+    <div class="s-item" onclick="setProduct('Microsoft Exchange',this)"><div class="s-dot"></div>Exchange</div>
+    <div class="s-item" onclick="setProduct('Microsoft 365',this)"><div class="s-dot"></div>Microsoft 365</div>
+    <div class="s-item" onclick="setProduct('Microsoft Teams',this)"><div class="s-dot"></div>Teams</div>
+    <div class="s-item" onclick="setProduct('Microsoft Sentinel',this)"><div class="s-dot"></div>Sentinel</div>
+    <div class="s-item" onclick="setProduct('GitHub',this)"><div class="s-dot"></div>GitHub</div>
+    <div class="s-div"></div>
+    <div class="s-label">Network & Cloud</div>
+    <div class="s-item" onclick="setProduct('Cisco',this)"><div class="s-dot"></div>Cisco</div>
+    <div class="s-item" onclick="setProduct('Fortinet',this)"><div class="s-dot"></div>Fortinet</div>
+    <div class="s-item" onclick="setProduct('Palo Alto Networks',this)"><div class="s-dot"></div>Palo Alto</div>
+    <div class="s-item" onclick="setProduct('Juniper',this)"><div class="s-dot"></div>Juniper</div>
+    <div class="s-item" onclick="setProduct('F5',this)"><div class="s-dot"></div>F5</div>
+    <div class="s-item" onclick="setProduct('VMware',this)"><div class="s-dot"></div>VMware</div>
+    <div class="s-item" onclick="setProduct('Citrix',this)"><div class="s-dot"></div>Citrix</div>
+    <div class="s-div"></div>
+    <div class="s-label">Enterprise</div>
+    <div class="s-item" onclick="setProduct('Oracle',this)"><div class="s-dot"></div>Oracle</div>
+    <div class="s-item" onclick="setProduct('SAP',this)"><div class="s-dot"></div>SAP</div>
+    <div class="s-item" onclick="setProduct('IBM',this)"><div class="s-dot"></div>IBM</div>
+    <div class="s-item" onclick="setProduct('ServiceNow',this)"><div class="s-dot"></div>ServiceNow</div>
+    <div class="s-item" onclick="setProduct('Atlassian',this)"><div class="s-dot"></div>Atlassian</div>
+    <div class="s-item" onclick="setProduct('SolarWinds',this)"><div class="s-dot"></div>SolarWinds</div>
+    <div class="s-item" onclick="setProduct('Ivanti',this)"><div class="s-dot"></div>Ivanti</div>
+    <div class="s-div"></div>
+    <div class="s-label">Linux & Open Source</div>
+    <div class="s-item" onclick="setProduct('Red Hat',this)"><div class="s-dot"></div>Red Hat</div>
+    <div class="s-item" onclick="setProduct('Ubuntu',this)"><div class="s-dot"></div>Ubuntu</div>
+    <div class="s-item" onclick="setProduct('Debian',this)"><div class="s-dot"></div>Debian</div>
+    <div class="s-item" onclick="setProduct('Linux Kernel',this)"><div class="s-dot"></div>Linux Kernel</div>
+    <div class="s-item" onclick="setProduct('Apache',this)"><div class="s-dot"></div>Apache</div>
+    <div class="s-item" onclick="setProduct('OpenSSL',this)"><div class="s-dot"></div>OpenSSL</div>
+    <div class="s-item" onclick="setProduct('Nginx',this)"><div class="s-dot"></div>Nginx</div>
+    <div class="s-div"></div>
+    <div class="s-label">Security Tools</div>
+    <div class="s-item" onclick="setProduct('Tenable',this)"><div class="s-dot"></div>Tenable</div>
+    <div class="s-item" onclick="setProduct('CrowdStrike',this)"><div class="s-dot"></div>CrowdStrike</div>
+    <div class="s-item" onclick="setProduct('Qualys',this)"><div class="s-dot"></div>Qualys</div>
+    <div class="s-item" onclick="setProduct('Splunk',this)"><div class="s-dot"></div>Splunk</div>
+    <div class="s-item" onclick="setProduct('Rapid7',this)"><div class="s-dot"></div>Rapid7</div>
+    <div class="s-div"></div>
+    <div class="s-label">End User</div>
+    <div class="s-item" onclick="setProduct('Apple',this)"><div class="s-dot"></div>Apple</div>
+    <div class="s-item" onclick="setProduct('Google Chrome',this)"><div class="s-dot"></div>Chrome</div>
+    <div class="s-item" onclick="setProduct('Android',this)"><div class="s-dot"></div>Android</div>
+    <div class="s-item" onclick="setProduct('Mozilla Firefox',this)"><div class="s-dot"></div>Firefox</div>
+    <div class="s-item" onclick="setProduct('WordPress',this)"><div class="s-dot"></div>WordPress</div>
+    <div class="s-item" onclick="setProduct('Zoom',this)"><div class="s-dot"></div>Zoom</div>
+    <div class="s-div"></div>
+    <div class="s-label">My Watchlist</div>
+    <div id="watchlist-nav"></div>
+  </aside>
+
+  <main>
+    <div class="stats">
+      <div class="stat"><div class="stat-lbl">Total items</div><div class="stat-val" id="stat-total">—</div><div class="stat-sub">in database</div></div>
+      <div class="stat r"><div class="stat-lbl">Active exploits</div><div class="stat-val" id="stat-kev">—</div><div class="stat-sub">CISA KEV</div></div>
+      <div class="stat a"><div class="stat-lbl">Data breaches</div><div class="stat-val" id="stat-breach">—</div><div class="stat-sub">tracked</div></div>
+      <div class="stat b"><div class="stat-lbl">New CVEs</div><div class="stat-val" id="stat-cve">—</div><div class="stat-sub">last 24h</div></div>
+    </div>
+
+    <div class="ai-box">
+      <div class="ai-lbl">⬡ AI Intelligence Query</div>
+      <div class="ai-row">
+        <input class="ai-input" id="ai-input" placeholder="e.g. Is there anything new about Fortinet today? What are the latest critical CVEs?" onkeydown="if(event.key==='Enter')askAI()">
+        <button class="ai-btn" id="ai-btn" onclick="askAI()">ASK AI</button>
+      </div>
+      <div class="ai-resp" id="ai-resp"></div>
+    </div>
+
+    <div class="feed-hdr">
+      <div class="feed-title" id="feed-label">ALL INTELLIGENCE</div>
+      <div class="feed-line"></div>
+      <div class="feed-ct" id="feed-count">—</div>
+    </div>
+
+    <div id="feed-container">
+      <div class="loading"><div class="spinner"></div>Loading intelligence feed...</div>
+    </div>
+    <button class="load-more" id="load-more" onclick="loadMore()" style="display:none">LOAD MORE</button>
+  </main>
+</div>
+
+<script>
+// No API keys here — all calls go to our own secure backend
+let currentProduct = 'all';
+let currentPage = 0;
+const PAGE_SIZE = 25;
+let allItems = [];
+let watchlist = JSON.parse(localStorage.getItem('sec-watchlist') || '[]');
+let searchTimeout;
+
+async function init() {
+  await loadStats();
+  await loadFeed();
+  renderWatchlistNav();
+  document.getElementById('last-updated').textContent = 'LIVE · ' + new Date().toLocaleTimeString();
+}
+
+async function loadStats() {
+  try {
+    const r = await fetch('/api/stats');
+    const d = await r.json();
+    document.getElementById('stat-total').textContent  = fmt(d.total);
+    document.getElementById('stat-kev').textContent    = fmt(d.kev);
+    document.getElementById('stat-breach').textContent = fmt(d.breach);
+    document.getElementById('stat-cve').textContent    = fmt(d.cve);
+  } catch(e) { console.error('Stats error', e); }
+}
+
+function fmt(n) { return n >= 1000 ? (n/1000).toFixed(1)+'k' : String(n||0); }
+
+async function loadFeed(reset = true) {
+  if (reset) { currentPage = 0; allItems = []; }
+  const container = document.getElementById('feed-container');
+  if (reset) container.innerHTML = '<div class="loading"><div class="spinner"></div>Fetching feed...</div>';
+
+  const params = new URLSearchParams({
+    limit: PAGE_SIZE,
+    offset: currentPage * PAGE_SIZE
+  });
+  if (currentProduct !== 'all') params.set('product', currentProduct);
+
+  const r = await fetch(`/api/feed?${params}`);
+  const { items, total } = await r.json();
+
+  allItems = reset ? items : [...allItems, ...items];
+  document.getElementById('feed-count').textContent = (total||0) + ' items';
+  document.getElementById('feed-label').textContent = currentProduct === 'all' ? 'ALL INTELLIGENCE' : currentProduct.toUpperCase();
+  document.getElementById('load-more').style.display = allItems.length < (total||0) ? 'block' : 'none';
+  renderFeed(reset);
+}
+
+function renderFeed(reset) {
+  const container = document.getElementById('feed-container');
+  if (!allItems.length) { container.innerHTML = '<div class="empty">No items found.</div>'; return; }
+  container.innerHTML = allItems.map(renderCard).join('');
+}
+
+function renderCard(item) {
+  const isExploited = item.product === 'CISA KEV';
+  const isCVE       = item.product === 'CVE' || item.product === 'Exploit DB';
+  const isBreach    = item.product === 'Data Breach';
+  const isNews      = item.product === 'Security News';
+  const cardCls = isExploited ? 'card exploited' : isCVE ? 'card high' : 'card';
+  let badgeCls = 'badge bp', badgeTxt = item.product;
+  if (isExploited) { badgeCls='badge bx'; badgeTxt='⚠ ACTIVELY EXPLOITED'; }
+  else if (isCVE)  { badgeCls='badge bc'; }
+  else if (isBreach){ badgeCls='badge bb'; }
+  else if (isNews)  { badgeCls='badge bn'; }
+  const t = item.published_at ? new Date(item.published_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}) : '';
+  const inWatch = watchlist.includes(item.product);
+  return `<div class="${cardCls}">
+    <button class="watch-btn ${inWatch?'watching':''}" onclick="toggleWatch('${esc(item.product)}',this)">${inWatch?'★ watching':'☆ watch'}</button>
+    <div class="card-meta"><span class="${badgeCls}">${badgeTxt}</span><span class="card-time">${t}</span></div>
+    <div class="card-title">${esc(item.title)}</div>
+    ${item.summary?`<div class="card-summary">${esc(item.summary)}</div>`:''}
+    ${item.link?`<a class="card-link" href="${item.link}" target="_blank" rel="noopener">↗ Read full article</a>`:''}
+  </div>`;
+}
+
+function esc(s){ if(!s)return ''; return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+async function loadMore() { currentPage++; await loadFeed(false); }
+
+function setProduct(p, el) {
+  currentProduct = p;
+  document.querySelectorAll('.s-item').forEach(i=>i.classList.remove('active'));
+  if(el) el.classList.add('active');
+  loadFeed();
+}
+
+function handleSearch(q) {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(()=>searchFeed(q), 350);
+}
+
+async function searchFeed(q) {
+  if (!q.trim()) { loadFeed(); return; }
+  document.getElementById('feed-container').innerHTML = '<div class="loading"><div class="spinner"></div>Searching...</div>';
+  const r = await fetch(`/api/feed?search=${encodeURIComponent(q)}&limit=50`);
+  const { items, total } = await r.json();
+  allItems = items;
+  document.getElementById('feed-count').textContent = (total||items.length) + ' results';
+  document.getElementById('feed-label').textContent = 'SEARCH: ' + q.toUpperCase();
+  document.getElementById('load-more').style.display = 'none';
+  renderFeed(true);
+}
+
+function toggleWatch(product, btn) {
+  const idx = watchlist.indexOf(product);
+  if (idx===-1) { watchlist.push(product); btn.textContent='★ watching'; btn.classList.add('watching'); }
+  else { watchlist.splice(idx,1); btn.textContent='☆ watch'; btn.classList.remove('watching'); }
+  localStorage.setItem('sec-watchlist', JSON.stringify(watchlist));
+  renderWatchlistNav();
+}
+
+function renderWatchlistNav() {
+  const nav = document.getElementById('watchlist-nav');
+  if (!watchlist.length) {
+    nav.innerHTML='<div style="padding:.25rem .75rem;font-size:.72rem;color:var(--muted);font-family:Space Mono,monospace">Click ☆ on any card</div>';
+    return;
+  }
+  nav.innerHTML = watchlist.map(p=>`<div class="s-item" onclick="setProduct('${esc(p)}',this)"><div class="s-dot" style="background:var(--accent)"></div>${esc(p)}</div>`).join('');
+}
+
+async function askAI() {
+  const input = document.getElementById('ai-input');
+  const btn   = document.getElementById('ai-btn');
+  const resp  = document.getElementById('ai-resp');
+  const q = input.value.trim();
+  if (!q) return;
+  btn.disabled=true; btn.textContent='THINKING...';
+  resp.className='ai-resp show'; resp.textContent='⬡ Querying intelligence database...';
+  try {
+    const r = await fetch('/api/ask', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ question: q })
+    });
+    const d = await r.json();
+    resp.textContent = d.answer || d.error || 'No response.';
+  } catch(e) {
+    resp.textContent = 'AI query failed: ' + e.message;
+  }
+  btn.disabled=false; btn.textContent='ASK AI';
+}
+
+init();
+</script>
+</body>
+</html>
